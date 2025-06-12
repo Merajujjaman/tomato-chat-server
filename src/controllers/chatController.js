@@ -1,23 +1,23 @@
 const Message = require("../models/Message.model");
 const PushSubscription = require('../models/PushSubscription.model');
-const webpush = require('../utils/push'); // The file you just created
+const webpush = require('../utils/push');
 
 
 // Send a new message
 exports.sendMessage = async (req, res) => {
-    const { content, sender, receiverId, senderName, messageText } = req.body;
+    const { content, sender, receiver } = req.body;
 
     try {
-        const newMessage = new Message({ content, sender });
+        const newMessage = new Message({ content, sender, receiver });
         await newMessage.save();
 
         // Find recipient's push subscription
-        const recipientSub = await PushSubscription.findOne({ userId: receiverId });
+        const recipientSub = await PushSubscription.findOne({ userId: receiver });
         if (recipientSub) {
             const payload = JSON.stringify({
                 title: "New Message",
-                body: `${senderName}: ${messageText}`,
-                // You can add more fields here (icon, url, etc)
+                body: `${content}`,
+                // Optionally add icon, url, etc.
             });
             await webpush.sendNotification(recipientSub.subscription, payload);
         }
@@ -27,7 +27,7 @@ exports.sendMessage = async (req, res) => {
     }
 };
 
-// Retrieve all messages
+// Retrieve all messages between two users
 exports.getMessages = async (req, res) => {
     const { userId, otherUserId } = req.query;
     try {

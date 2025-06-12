@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-const chatRoutes = require("./routes/chatRoutes"); // If you have group chat
+const chatRoutes = require("./routes/chatRoutes");
 const authRoutes = require("./routes/authRoutes");
 const pushRoutes = require('./routes/pushRoutes');
 
@@ -14,7 +14,7 @@ app.use(cors({
 app.use(bodyParser.json());
 
 app.use('/api/auth', authRoutes);
-// app.use('/api/chat', chatRoutes); // If you have group chat
+app.use('/api', chatRoutes);      // <-- Enable chat routes here!
 app.use('/api', pushRoutes);
 
 module.exports = app;
