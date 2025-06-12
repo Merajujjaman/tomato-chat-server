@@ -16,8 +16,16 @@ exports.sendMessage = async (req, res) => {
 
 // Retrieve all messages
 exports.getMessages = async (req, res) => {
+    const { userId, otherUserId } = req.query;
     try {
-        const messages = await Message.find().sort({ createdAt: -1 });
+        const messages = await Message.find({
+            $or: [
+                { sender: userId, receiver: otherUserId },
+                { sender: otherUserId, receiver: userId }
+            ]
+        })
+        .sort({ createdAt: 1 }) // oldest first
+        .limit(100); // only last 100 messages
         res.status(200).json(messages);
     } catch (error) {
         res.status(500).json({ message: 'Error retrieving messages', error });

@@ -7,6 +7,6 @@ const messageSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
-messageSchema.index({ createdAt: 1 });
+messageSchema.index({ sender: 1, receiver: 1, createdAt: 1 });
 
 module.exports = mongoose.model("Message", messageSchema);
