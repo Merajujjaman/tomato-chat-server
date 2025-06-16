@@ -19,7 +19,15 @@ exports.sendMessage = async (req, res) => {
                 body: `${content}`,
                 // Optionally add icon, url, etc.
             });
-            await webpush.sendNotification(recipientSub.subscription, payload);
+            // console.log("Sending push notification to:", recipientSub.userId);
+            try {
+                await webpush.sendNotification(recipientSub.subscription, payload);
+                // console.log("Push notification sent!");
+            } catch (err) {
+                // console.error("Push notification error:", err);
+            }
+        } else {
+            console.log("No subscription found for user:", receiver);
         }
         res.status(201).json(newMessage);
     } catch (error) {
