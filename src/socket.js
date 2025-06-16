@@ -8,6 +8,14 @@ module.exports = (io) => {
     const userId = socket.handshake.query.userId;
     if (userId) socket.join(userId);
 
+    // Typing indicator events
+    socket.on('typing', ({ to }) => {
+      io.to(to).emit('typing', { from: userId });
+    });
+    socket.on('stop typing', ({ to }) => {
+      io.to(to).emit('stop typing', { from: userId });
+    });
+
     // Private message send/receive (NO database save here)
     socket.on('private message', (msg) => {
       io.to(msg.receiver).emit('private message', msg);
