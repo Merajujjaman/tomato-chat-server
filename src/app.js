@@ -13,6 +13,11 @@ app.use(cors({
 }));
 app.use(bodyParser.json());
 
+app.options('*', cors({
+  origin: ["http://localhost:3000", "https://tomato-chat-client.vercel.app"],
+  credentials: true
+}));
+
 app.use('/api/auth', authRoutes);
 app.use('/api', chatRoutes);      // <-- Enable chat routes here!
 app.use('/api', pushRoutes);
