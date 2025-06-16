@@ -8,15 +8,13 @@ module.exports = (io) => {
     const userId = socket.handshake.query.userId;
     if (userId) socket.join(userId);
 
-    // Private message send/receive
-    socket.on('private message', async (msg) => {
-      // msg: { text, sender, receiver }
-      const saved = await Message.create(msg);
-      io.to(msg.receiver).emit('private message', saved);
-      io.to(msg.sender).emit('private message', saved);
+    // Private message send/receive (NO database save here)
+    socket.on('private message', (msg) => {
+      io.to(msg.receiver).emit('private message', msg);
+      io.to(msg.sender).emit('private message', msg);
     });
 
-    // Fetch chat history between two users
+    // Fetch chat history between two users (keep this)
     socket.on('get history', async ({ userId, otherUserId }) => {
       const messages = await Message.find({
         $or: [

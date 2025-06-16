@@ -9,8 +9,9 @@ const setupSocket = (app) => {
         console.log('New client connected');
 
         socket.on("private message", (msg) => {
-            // Just broadcast to the recipient:
+            // Broadcast to both sender and receiver
             io.to(msg.receiver).emit("private message", msg);
+            io.to(msg.sender).emit("private message", msg);
         });
 
         socket.on('disconnect', () => {
