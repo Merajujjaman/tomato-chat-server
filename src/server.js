@@ -15,6 +15,10 @@ const io = new Server(server, {
 });
 require("./socket")(io);
 
+app.use('/', (req, res) => {
+  res.send("Welcome to the Tomato Chat API");
+});
+
 const PORT = process.env.PORT || 5000;
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
