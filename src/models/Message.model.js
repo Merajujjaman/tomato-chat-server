@@ -1,9 +1,12 @@
 const mongoose = require("mongoose");
 
 const messageSchema = new mongoose.Schema({
-  content: { type: String, required: true }, // <-- This is critical!
+  // content: { type: String, required: true }, // <-- This is critical!
+  content: { type: String, required: function() { return this.type === 'text'; } },
   sender: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   receiver: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  type: { type: String, enum: ['text', 'image'], default: 'text' },
+  imageUrl: { type: String },
   createdAt: { type: Date, default: Date.now }
 });
 

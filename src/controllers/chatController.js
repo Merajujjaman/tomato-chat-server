@@ -1,11 +1,12 @@
 const Message = require("../models/Message.model");
 const PushSubscription = require('../models/PushSubscription.model');
 const webpush = require('../utils/push');
-
+const User = require('../models/User.model');
 
 // Send a new message
 exports.sendMessage = async (req, res) => {
     const { content, sender, receiver } = req.body;
+    const receiverUser = await User.findById(receiver);
 
     try {
         const newMessage = new Message({ content, sender, receiver });
@@ -16,7 +17,7 @@ exports.sendMessage = async (req, res) => {
         if (recipientSub) {
             const payload = JSON.stringify({
                 title: "New Message",
-                body: `${content}`,
+                body: `${receiverUser?.username} sent: ${content}`,
                 // Optionally add icon, url, etc.
             });
             // console.log("Sending push notification to:", recipientSub.userId);

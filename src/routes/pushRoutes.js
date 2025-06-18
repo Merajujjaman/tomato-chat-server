@@ -6,7 +6,7 @@ const auth = require('../middleware/auth'); // Your JWT auth middleware
 router.post('/subscribe', auth, async (req, res) => {
   try {
     const { subscription } = req.body;
-    const userId = req.user.userId;
+    const userId = req.user._id;
 
     // Upsert: update if exists, insert if not
     await PushSubscription.findOneAndUpdate(
