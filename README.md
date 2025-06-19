@@ -44,7 +44,7 @@ This is the backend part of the MERN stack real-time chat application using Sock
    npm start
    ```
 
-2. The server will run on `http://localhost:5000` (or the port specified in your configuration).
+2. The server will run on `https://tomato-chat-server-y4uh.onrender.com` (or the port specified in your configuration).
 
 ### API Endpoints
 
