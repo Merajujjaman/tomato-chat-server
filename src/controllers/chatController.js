@@ -6,7 +6,7 @@ const User = require('../models/User.model');
 // Send a new message
 exports.sendMessage = async (req, res) => {
     const { content, sender, receiver } = req.body;
-    const receiverUser = await User.findById(receiver);
+    const senderUser = await User.findById(sender);
 
     try {
         const newMessage = new Message({ content, sender, receiver });
@@ -17,7 +17,7 @@ exports.sendMessage = async (req, res) => {
         if (recipientSub) {
             const payload = JSON.stringify({
                 title: "New Message",
-                body: `${receiverUser?.username} sent: ${content}`,
+                body: `${senderUser?.username} sent: ${content}`,
                 // Optionally add icon, url, etc.
             });
             // console.log("Sending push notification to:", recipientSub.userId);
