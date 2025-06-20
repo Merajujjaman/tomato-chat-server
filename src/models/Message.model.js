@@ -7,9 +7,11 @@ const messageSchema = new mongoose.Schema({
   receiver: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   type: { type: String, enum: ['text', 'image'], default: 'text' },
   imageUrl: { type: String },
-  createdAt: { type: Date, default: Date.now }
+  createdAt: { type: Date, default: Date.now },
+  readAt: { type: Date, default: null }
 });
 
 messageSchema.index({ sender: 1, receiver: 1, createdAt: 1 });
+messageSchema.index({ receiver: 1, readAt: 1 });
 
 module.exports = mongoose.model("Message", messageSchema);

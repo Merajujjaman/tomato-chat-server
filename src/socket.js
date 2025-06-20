@@ -25,6 +25,22 @@ module.exports = (io) => {
     socket.on("private message", (msg) => {
       io.to(msg.receiver).emit("private message", msg);
       io.to(msg.sender).emit("private message", msg);
+      // Emit new-message event for real-time unread badge
+      io.to(msg.receiver).emit("new-message", { from: msg.sender });
+    });
+
+    // Mark messages as read (for real-time badge update)
+    socket.on("mark-messages-read", async ({ fromUserId }) => {
+      if (!userId) return;
+      // Update messages in DB
+      await Message.updateMany(
+        { sender: fromUserId, receiver: userId, readAt: null },
+        { $set: { readAt: new Date() } }
+      );
+      // Debug log for event emission
+      // console.log('Emitting messages-read to', fromUserId, 'by', userId);
+      // Notify sender to update their unread counts
+      io.to(fromUserId).emit("messages-read", { by: userId });
     });
 
     // Fetch chat history between two users (keep this)
