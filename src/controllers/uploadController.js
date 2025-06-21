@@ -1,5 +1,6 @@
 const cloudinary = require('../config/cloudinary');
 const Message = require('../models/Message.model');
+const User = require('../models/User.model');
 const PushSubscription = require('../models/PushSubscription.model');
 const webpush = require('../utils/push');
 const fs = require('fs');
@@ -62,6 +63,47 @@ const uploadImage = async (req, res) => {
   }
 };
 
+const uploadProfilePicture = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'No image file provided' });
+    }
+
+    // Upload to Cloudinary with profile picture specific settings
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: 'profile-pictures',
+      transformation: [
+        { width: 200, height: 200, crop: 'fill', gravity: 'face' },
+        { quality: 'auto' }
+      ]
+    });
+
+    // Clean up temporary file
+    fs.unlinkSync(req.file.path);
+
+    // Update user's profile picture
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { profilePicture: result.secure_url },
+      { new: true, select: '-password' }
+    );
+
+    res.json({ 
+      message: 'Profile picture updated successfully',
+      profilePicture: result.secure_url,
+      user 
+    });
+  } catch (error) {
+    console.error('Profile picture upload error:', error);
+    // Clean up file on error too
+    if (req.file && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
+    res.status(500).json({ message: 'Error uploading profile picture' });
+  }
+};
+
 module.exports = {
-  uploadImage
+  uploadImage,
+  uploadProfilePicture
 }; 

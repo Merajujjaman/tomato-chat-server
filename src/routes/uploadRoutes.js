@@ -1,7 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
-const { uploadImage } = require('../controllers/uploadController');
+const { uploadImage, uploadProfilePicture } = require('../controllers/uploadController');
 const auth = require('../middleware/auth');
 
 const router = express.Router();
@@ -41,5 +41,6 @@ if (!fs.existsSync('uploads')) {
 }
 
 router.post('/upload-image', auth, upload.single('image'), uploadImage);
+router.post('/upload-profile-picture', auth, upload.single('image'), uploadProfilePicture);
 
 module.exports = router; 
